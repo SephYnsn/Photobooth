@@ -1,57 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snap Studio — Photo Booth</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="app">
-    <header class="topbar">
-      <div class="brand">✳ SNAP STUDIO</div>
-      <span class="tag">YOUR LITTLE PHOTO BOOTH</span>
-    </header>
-
-    <section class="intro">
-      <p class="eyebrow">MAKE A LITTLE MEMORY</p>
-      <h1>Strike a pose<span>.</span></h1>
-      <p class="subheading">Choose a filter, take a photo, and keep the moment.</p>
-    </section>
-
-    <section class="booth">
-      <div class="camera-frame">
-        <video id="video" autoplay playsinline muted></video>
-        <canvas id="canvas" hidden></canvas>
-        <img id="photo" alt="Your captured photo" hidden />
-        <div class="frame-label">LIVE PREVIEW</div>
-        <div id="cameraMessage" class="camera-message">Allow camera access to get started.</div>
-      </div>
-
-      <div class="controls">
-        <div class="filter-row">
-          <span class="control-label">FILTER</span>
-          <div class="filters">
-            <button class="filter active" data-filter="none">Original</button>
-            <button class="filter" data-filter="grayscale(1)">B&W</button>
-            <button class="filter" data-filter="sepia(.75)">Vintage</button>
-            <button class="filter" data-filter="saturate(1.7)">Vivid</button>
-            <button class="filter" data-filter="contrast(1.25) brightness(1.05)">Bright</button>
-          </div>
-        </div>
-
-        <div class="button-row">
-          <button id="startBtn" class="secondary">Start camera</button>
-          <button id="captureBtn" class="shutter" disabled><span></span> Take photo</button>
-          <button id="retakeBtn" class="secondary" disabled>Retake</button>
-          <a id="downloadBtn" class="download disabled" aria-disabled="true">Download</a>
-        </div>
-        <p id="status" class="status">Your camera stays in this browser. Nothing is uploaded.</p>
-      </div>
-    </section>
-
-    <footer>GOOD LIGHT. GOOD FRIENDS. GOOD MEMORIES. <span>♡</span></footer>
-  </main>
-  <script src="script.js"></script>
-</body>
-</html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f6efe7"><title>Snap Studio</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head>
+<body><main class="app">
+<header class="topbar"><a class="brand" href="#">✳ SNAP STUDIO</a><span class="top-note">A LITTLE MOMENT, A LOVELY MEMORY</span></header>
+<section id="welcomeScreen" class="screen welcome-screen"><div class="welcome-copy"><p class="eyebrow">YOUR LITTLE PHOTO BOOTH</p><h1>Make memories<br><em>together.</em></h1><p class="intro-copy">Four little snapshots. One lovely keepsake.<br>Ready to make something cute?</p><button id="startBtn" class="btn btn-primary btn-large">Start photobooth <span>→</span></button><p class="privacy-note">♡ Your photo strip is uploaded to the event's Google Drive.</p></div><div class="welcome-art"><div class="sticker sticker-star">✳</div><div class="mini-strip"><div class="mini-photo mini-one"></div><div class="mini-photo mini-two"></div><div class="mini-photo mini-three"></div><div class="mini-photo mini-four"></div><div class="mini-caption">SNAP STUDIO · 2026</div></div><div class="sticker sticker-heart">♡</div><span class="art-caption">SMILE, IT'S YOUR MOMENT!</span></div></section>
+<section id="cameraScreen" class="screen hidden"><div class="section-heading"><p class="eyebrow">LOOKING GOOD ALREADY</p><h2>Ready, set, <em>smile!</em></h2><p>Choose your look, then take four photos.</p></div><div class="booth-layout"><div class="camera-card"><div class="camera-frame"><video id="video" autoplay playsinline muted></video><div id="cameraPlaceholder" class="camera-placeholder"><span>✳</span><p>Turn on your camera to get started</p></div><div class="live-label">● LIVE</div><div id="countdown" class="countdown hidden">3</div><div id="shotFlash" class="shot-flash"></div></div><div class="camera-bottom"><span id="shotCounter">PHOTO 0 / 4</span><span>LOOK AT THE CAMERA ♡</span></div></div><aside class="settings-card"><div><p class="control-label">CHOOSE A FILTER</p><div class="filters"><button class="filter active" data-filter="original">Original</button><button class="filter" data-filter="bw">B&W</button><button class="filter" data-filter="vintage">Vintage</button><button class="filter" data-filter="warm">Warm</button><button class="filter" data-filter="vivid">Vivid</button></div></div><div class="tip-box"><span>✦</span><p><strong>Photo tip</strong><br>Find good lighting and get your besties in the frame!</p></div><button id="beginSessionBtn" class="btn btn-primary" disabled>Start 4-photo session <span>→</span></button><button id="backHomeBtn" class="btn btn-text">Back to welcome</button><p id="cameraStatus" class="status">Allow camera access when your browser asks.</p></aside></div></section>
+<section id="previewScreen" class="screen hidden"><div class="section-heading"><p class="eyebrow">LOOK AT THAT MASTERPIECE</p><h2>Your photo <em>strip!</em></h2><p>Save it and scan the QR code to open your photo.</p></div><div class="result-layout"><div class="strip-wrap"><img id="stripPreview" class="strip-preview" alt="Your finished four-photo strip"></div><aside class="result-card"><div id="uploadState" class="upload-state"><span class="spinner"></span><div><strong>Saving your memories...</strong><p>Uploading your photo strip to Google Drive.</p></div></div><div id="qrSection" class="qr-section hidden"><p class="control-label">YOUR PERSONAL PHOTO LINK</p><div id="qrcode" class="qr-code"></div><strong>Scan to view your photo</strong><p class="small-copy">Open your phone camera and point it at the QR code.</p><a id="driveLink" class="text-link" target="_blank" rel="noopener">Open photo in Google Drive ↗</a></div><div id="uploadError" class="upload-error hidden"><strong>Upload needs another try</strong><p id="uploadErrorText">We couldn't confirm the upload.</p><button id="retryUploadBtn" class="btn btn-secondary">Retry upload</button></div><a id="downloadBtn" class="btn btn-primary disabled" aria-disabled="true" download="snap-studio-photo-strip.png">Download photo strip ↓</a><button id="againBtn" class="btn btn-secondary">Take another set</button><p class="privacy-note">Anyone with this QR link can view this photo.</p></aside></div></section>
+<footer>MADE WITH LOVE & A LITTLE BIT OF ✳ <span>SNAP STUDIO</span></footer></main><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="script.js"></script></body></html>
