@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snap Studio — Photo Booth</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">✳ SNAP STUDIO</div>
+      <span class="tag">YOUR LITTLE PHOTO BOOTH</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">MAKE A LITTLE MEMORY</p>
+      <h1>Strike a pose<span>.</span></h1>
+      <p class="subheading">Choose a filter, take a photo, and keep the moment.</p>
+    </section>
+
+    <section class="booth">
+      <div class="camera-frame">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas" hidden></canvas>
+        <img id="photo" alt="Your captured photo" hidden />
+        <div class="frame-label">LIVE PREVIEW</div>
+        <div id="cameraMessage" class="camera-message">Allow camera access to get started.</div>
+      </div>
+
+      <div class="controls">
+        <div class="filter-row">
+          <span class="control-label">FILTER</span>
+          <div class="filters">
+            <button class="filter active" data-filter="none">Original</button>
+            <button class="filter" data-filter="grayscale(1)">B&W</button>
+            <button class="filter" data-filter="sepia(.75)">Vintage</button>
+            <button class="filter" data-filter="saturate(1.7)">Vivid</button>
+            <button class="filter" data-filter="contrast(1.25) brightness(1.05)">Bright</button>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button id="startBtn" class="secondary">Start camera</button>
+          <button id="captureBtn" class="shutter" disabled><span></span> Take photo</button>
+          <button id="retakeBtn" class="secondary" disabled>Retake</button>
+          <a id="downloadBtn" class="download disabled" aria-disabled="true">Download</a>
+        </div>
+        <p id="status" class="status">Your camera stays in this browser. Nothing is uploaded.</p>
+      </div>
+    </section>
+
+    <footer>GOOD LIGHT. GOOD FRIENDS. GOOD MEMORIES. <span>♡</span></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
