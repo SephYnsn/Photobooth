@@ -1,6 +1,7 @@
 // Paste your deployed Google Apps Script Web App URL ending in /exec.
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyadSLavPpfutK88ovCLEC-C76EWwjaarHI-_Ui8RJ-FUPe1Qm2n8MSk3lobHjjpbjcUw/exec";
 
+
 const $ = id => document.getElementById(id);
 
 const welcomeScreen = $("welcomeScreen"), 
@@ -22,7 +23,7 @@ const downloadBtn = $("downloadBtn"),
       driveLink = $("driveLink");
 
 let stream = null, 
-    selectedFilter = "original", 
+    selectedFilter = "bw", // Changed default to Black & White
     shots = [], 
     finalBlob = null, 
     finalUrl = null, 
@@ -50,7 +51,7 @@ async function startCamera() {
     await video.play();
     cameraPlaceholder.classList.add("hidden");
     beginSessionBtn.disabled = false;
-    cameraStatus.textContent = "Camera ready! Choose a filter and start your session.";
+    cameraStatus.textContent = "Camera ready! Start your press session.";
   } catch (e) {
     cameraStatus.textContent = e.message || "Camera access was denied. Check browser permissions.";
   }
@@ -70,13 +71,12 @@ document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", ()
   video.style.filter = ({
     original: "none",
     bw: "grayscale(1)",
-    vintage: "sepia(.72) contrast(1.08)",
-    warm: "sepia(.28) saturate(1.2)",
-    vivid: "saturate(1.55) contrast(1.08)"
+    vintage: "sepia(.8) contrast(1.1)",
+    warm: "sepia(.3) saturate(1.2)",
+    vivid: "saturate(1.5) contrast(1.1)"
   })[selectedFilter];
 }));
 
-// Pixel-level filter processing ensures the saved/uploaded pixels match the preview filter.
 function applyPixelFilter(ctx, w, h, name) {
   if (name === "original") return;
   const im = ctx.getImageData(0, 0, w, h), d = im.data;
@@ -90,9 +90,9 @@ function applyPixelFilter(ctx, w, h, name) {
       const nr = .393 * r + .769 * g + .189 * b,
             ng = .349 * r + .686 * g + .168 * b,
             nb = .272 * r + .534 * g + .131 * b;
-      r = nr * 1.04 + 5; g = ng * 1.01 + 3; b = nb * .92;
+      r = nr * 1.04; g = ng * 1.01; b = nb * .92;
     } else if (name === "warm") {
-      r = r * 1.08 + 8; g = g * 1.015 + 2; b = b * .91;
+      r = r * 1.08; g = g * 1.015; b = b * .91;
     } else if (name === "vivid") {
       const a = (r + g + b) / 3;
       r = (a + (r - a) * 1.35 - 128) * 1.08 + 128;
@@ -130,7 +130,7 @@ async function countdown() {
     countdownEl.classList.remove("hidden");
     await wait(850);
   }
-  countdownEl.textContent = "✳";
+  countdownEl.textContent = "📸";
   await wait(250);
   countdownEl.classList.add("hidden");
 }
@@ -142,39 +142,58 @@ function toBlob(c) {
 async function makeStrip() {
   const pw = 720, 
         ph = shots[0].height, 
-        m = 28, 
-        g = 14, 
-        head = 82, 
-        foot = 76, 
+        m = 32, 
+        g = 20, 
+        head = 95, 
+        foot = 85, 
         c = document.createElement("canvas");
         
   c.width = pw + 2 * m;
   c.height = head + m + ph * 4 + g * 3 + foot + m;
   
   const x = c.getContext("2d");
-  x.fillStyle = "#fffdf9";
+  
+  // Background - Aged paper color
+  x.fillStyle = "#eee9dd";
   x.fillRect(0, 0, c.width, c.height);
   
-  x.textAlign = "center";
-  x.fillStyle = "#302821";
-  x.font = "bold 27px Georgia";
-  x.fillText("SNAP STUDIO", c.width / 2, 48);
+  // Border around the whole strip
+  x.strokeStyle = "#111111";
+  x.lineWidth = 4;
+  x.strokeRect(8, 8, c.width - 16, c.height - 16);
+  x.lineWidth = 1;
+  x.strokeRect(14, 14, c.width - 28, c.height - 28);
   
-  x.fillStyle = "#b9785f";
-  x.font = "12px monospace";
-  x.fillText("A LITTLE MOMENT, A LOVELY MEMORY", c.width / 2, 68);
+  x.textAlign = "center";
+  x.fillStyle = "#111111"; // Black ink
+  
+  // Headline font
+  x.font = "bold 34px Georgia, serif"; 
+  x.fillText("THE SNAP STUDIO TIMES", c.width / 2, 55);
+  
+  // Subheading font
+  x.font = "bold 13px 'Courier New', monospace";
+  x.fillText("VOL 1. — PRICE: 1 SMILE", c.width / 2, 78);
+  
+  // Draw line under header
+  x.beginPath();
+  x.moveTo(m, 90);
+  x.lineTo(c.width - m, 90);
+  x.stroke();
   
   shots.forEach((s, i) => {
     const y = head + m + i * (ph + g);
     x.drawImage(s, m, y, pw, ph);
-    x.strokeStyle = "#eadfd5";
-    x.lineWidth = 2;
+    
+    // Thick black border around photos
+    x.strokeStyle = "#111111";
+    x.lineWidth = 3;
     x.strokeRect(m, y, pw, ph);
   });
   
-  x.fillStyle = "#8b7b6e";
-  x.font = "13px monospace";
-  x.fillText("THANKS FOR MAKING MEMORIES", c.width / 2, c.height - 37);
+  // Footer text
+  x.font = "bold 14px 'Courier New', monospace";
+  x.fillText("PRINTED ON LOCATION", c.width / 2, c.height - 45);
   
   finalBlob = await toBlob(c);
   if (finalUrl) URL.revokeObjectURL(finalUrl);
@@ -197,11 +216,11 @@ async function takeFour() {
   
   try {
     for (let i = 0; i < 4; i++) {
-      cameraStatus.textContent = `Get ready for photo ${i + 1} of 4...`;
+      cameraStatus.textContent = `Get ready for exposure ${i + 1} of 4...`;
       await countdown();
       
       shots.push(captureFrame());
-      shotCounter.textContent = `PHOTO ${shots.length} / 4`;
+      shotCounter.textContent = `EXPOSURE ${shots.length} / 4`;
       
       shotFlash.classList.remove("flash");
       void shotFlash.offsetWidth; // Trigger reflow
@@ -210,7 +229,7 @@ async function takeFour() {
       if (i < 3) await wait(900);
     }
     
-    cameraStatus.textContent = "Putting your photo strip together...";
+    cameraStatus.textContent = "Developing your photo strip...";
     await makeStrip();
     showScreen(previewScreen);
     uploadStrip();
@@ -225,14 +244,13 @@ async function takeFour() {
 
 beginSessionBtn.addEventListener("click", takeFour);
 
-// The POST is opaque (no-cors), so a JSONP GET polls the server-side upload result.
 function getUploadStatus(token) {
   return new Promise((resolve, reject) => {
     const cb = "snapCallback_" + token.replace(/[^a-zA-Z0-9_]/g, ""), 
           s = document.createElement("script");
     let done = false;
     
-    const timer = setTimeout(() => finish(new Error("Timed out waiting for Google Drive.")), 9000);
+    const timer = setTimeout(() => finish(new Error("Timed out waiting for server.")), 9000);
     
     function finish(err, data) {
       if (done) return;
@@ -244,7 +262,7 @@ function getUploadStatus(token) {
     }
     
     window[cb] = data => finish(null, data);
-    s.onerror = () => finish(new Error("Could not check upload status. Check the Apps Script URL and deployment."));
+    s.onerror = () => finish(new Error("Could not check upload status."));
     s.src = `${GOOGLE_SCRIPT_URL}?action=status&token=${encodeURIComponent(token)}&callback=${cb}&_=${Date.now()}`;
     document.body.appendChild(s);
   });
@@ -254,7 +272,7 @@ async function uploadStrip() {
   if (!finalBlob) return;
   
   if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_YOUR")) {
-    showUploadError("Add your deployed Apps Script /exec URL in script.js.");
+    showUploadError("Add your deployed Apps Script URL to script.js.");
     return;
   }
   
@@ -288,7 +306,7 @@ async function uploadStrip() {
     }
     
     if (!result || result.status !== "success" || !result.url) {
-      throw new Error(result?.error || "Google Drive did not confirm the upload. Please retry.");
+      throw new Error(result?.error || "Server did not confirm the upload. Please retry.");
     }
     
     uploadState.classList.add("hidden");
@@ -301,12 +319,12 @@ async function uploadStrip() {
         text: result.url, 
         width: 180, 
         height: 180, 
-        colorDark: "#302821", 
+        colorDark: "#111111", 
         colorLight: "#ffffff", 
         correctLevel: QRCode.CorrectLevel.M 
       });
     } else {
-      $("qrcode").textContent = "QR library unavailable. Use the photo link below.";
+      $("qrcode").textContent = "QR library unavailable. Use the link below.";
     }
   } catch (e) {
     showUploadError(e.message);
@@ -322,7 +340,7 @@ function showUploadError(message) {
 $("retryUploadBtn").addEventListener("click", uploadStrip);
 $("againBtn").addEventListener("click", () => {
   shots = [];
-  shotCounter.textContent = "PHOTO 0 / 4";
+  shotCounter.textContent = "EXPOSURE 0 / 4";
   showScreen(cameraScreen);
   if (!stream || !stream.active) startCamera();
 });
