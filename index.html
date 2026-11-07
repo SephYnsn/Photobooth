@@ -17,13 +17,14 @@
       <div class="masthead-meta">PRICE: 1 SMILE</div>
     </header>
 
+    <!-- 1. WELCOME SCREEN -->
     <section id="welcomeScreen" class="screen welcome-screen">
       <div class="welcome-copy">
         <p class="eyebrow">BREAKING NEWS</p>
         <h1>Make memories<br><em>together.</em></h1>
-        <p class="intro-copy">Four little snapshots. One lovely keepsake.<br>Are you ready to make the front page?</p>
-        <button id="startBtn" class="btn btn-primary btn-large">START PHOTOBOOTH <span>→</span></button>
-        <p class="privacy-note">☞ Your photo strip is uploaded to the event's Google Drive archive.</p>
+        <p class="intro-copy">Pick a layout, choose your ink, and make the front page.<br>Ready for the press?</p>
+        <button id="startBtn" class="btn btn-primary btn-large">ENTER PRESS ROOM <span>→</span></button>
+        <p class="privacy-note">☞ Your prints are uploaded to the event's digital archive.</p>
       </div>
       <div class="welcome-art">
         <div class="mini-strip">
@@ -38,11 +39,50 @@
       </div>
     </section>
 
+    <!-- 2. TEMPLATE SELECTION SCREEN -->
+    <section id="templateScreen" class="screen hidden">
+      <div class="section-heading">
+        <p class="eyebrow">CHOOSE YOUR EDITION</p>
+        <h2>Select a <em>Layout</em></h2>
+        <p>How would you like your memories printed today?</p>
+      </div>
+      
+      <div class="template-grid">
+        <!-- Template 1: Classic Strip -->
+        <button class="template-card" data-template="classic_strip">
+          <div class="template-preview strip-preview-icon">
+            <div class="tp-box"></div><div class="tp-box"></div><div class="tp-box"></div><div class="tp-box"></div>
+          </div>
+          <h3>Classic Strip</h3>
+          <p>4 Photos</p>
+        </button>
+
+        <!-- Template 2: Front Page (A4) -->
+        <button class="template-card" data-template="front_page">
+          <div class="template-preview a4-preview-icon">
+            <div class="tp-header"></div>
+            <div class="tp-headline"></div>
+            <div class="tp-box large"></div>
+            <div class="tp-columns">
+              <div class="tp-col"></div><div class="tp-col"></div><div class="tp-col"></div>
+            </div>
+          </div>
+          <h3>Front Page</h3>
+          <p>1 Photo</p>
+        </button>
+      </div>
+
+      <div class="center-actions">
+        <button id="backToWelcomeBtn" class="btn btn-text">BACK TO COVER</button>
+      </div>
+    </section>
+
+    <!-- 3. CAMERA SCREEN -->
     <section id="cameraScreen" class="screen hidden">
       <div class="section-heading">
         <p class="eyebrow">LOCAL HEADLINES</p>
         <h2>Ready, set, <em>smile!</em></h2>
-        <p>Choose your ink, then take four photos for the press.</p>
+        <p>Choose your ink, then take your photos for the press.</p>
       </div>
       <div class="booth-layout">
         <div class="camera-card">
@@ -57,7 +97,7 @@
             <div id="shotFlash" class="shot-flash"></div>
           </div>
           <div class="camera-bottom">
-            <span id="shotCounter">EXPOSURE 0 / 4</span>
+            <span id="shotCounter">EXPOSURE 0 / 0</span>
             <span>LOOK AT THE CAMERA</span>
           </div>
         </div>
@@ -76,29 +116,30 @@
             <span>☛</span>
             <p><strong>Photographer's Tip:</strong><br>Find good lighting and get your besties in the frame!</p>
           </div>
-          <button id="beginSessionBtn" class="btn btn-primary" disabled>START 4-PHOTO SESSION <span>→</span></button>
-          <button id="backHomeBtn" class="btn btn-text">BACK TO FRONT PAGE</button>
+          <button id="beginSessionBtn" class="btn btn-primary" disabled>START SESSION <span>→</span></button>
+          <button id="backToTemplatesBtn" class="btn btn-text">CHANGE LAYOUT</button>
           <p id="cameraStatus" class="status">Allow camera access when your browser asks.</p>
         </aside>
       </div>
     </section>
 
+    <!-- 4. PREVIEW & UPLOAD SCREEN -->
     <section id="previewScreen" class="screen hidden">
       <div class="section-heading">
         <p class="eyebrow">HOT OFF THE PRESS</p>
-        <h2>Your photo <em>strip!</em></h2>
+        <h2>Your <em>Print!</em></h2>
         <p>Save it and scan the QR code to open your digital copy.</p>
       </div>
       <div class="result-layout">
         <div class="strip-wrap">
-          <img id="stripPreview" class="strip-preview" alt="Your finished four-photo strip">
+          <img id="stripPreview" class="strip-preview" alt="Your finished print">
         </div>
         <aside class="result-card">
           <div id="uploadState" class="upload-state">
             <span class="spinner"></span>
             <div>
               <strong>Printing your memories...</strong>
-              <p>Archiving your photo strip to Google Drive.</p>
+              <p>Archiving your print to Google Drive.</p>
             </div>
           </div>
           <div id="qrSection" class="qr-section hidden">
@@ -113,7 +154,7 @@
             <p id="uploadErrorText">We couldn't confirm the upload.</p>
             <button id="retryUploadBtn" class="btn btn-secondary">RETRY UPLOAD</button>
           </div>
-          <a id="downloadBtn" class="btn btn-primary disabled" aria-disabled="true" download="snap-studio-times.png">DOWNLOAD PHOTO STRIP ↓</a>
+          <a id="downloadBtn" class="btn btn-primary disabled" aria-disabled="true" download="snap-studio-times.png">DOWNLOAD PRINT ↓</a>
           <button id="againBtn" class="btn btn-secondary">TAKE ANOTHER SET</button>
           <p class="privacy-note">Anyone with this QR link can view this photo.</p>
         </aside>
