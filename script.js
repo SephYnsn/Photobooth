@@ -7,7 +7,7 @@ const captureBtn = document.getElementById('captureBtn');
 const retakeBtn = document.getElementById('retakeBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const statusText = document.getElementById('status');
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybXVDEXThvC002K2bYZ8f66SPIF0Ds1Jkoue63oo3Ku9H3UCdHpc3Aw0yV7OOLWW-C7g/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyadSLavPpfutK88ovCLEC-C76EWwjaarHI-_Ui8RJ-FUPe1Qm2n8MSk3lobHjjpbjcUw/exec";
 
 let stream = null;
 let selectedFilter = 'none';
@@ -15,19 +15,20 @@ let photoUrl = null;
 
 
 
+
 async function uploadToDrive(blob) {
-  statusText.textContent = "Uploading to Google Drive...";
+  statusText.textContent = "Uploading photo...";
 
   try {
     const reader = new FileReader();
 
     const imageData = await new Promise((resolve, reject) => {
       reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
+      reader.onerror = () => reject(reader.error);
       reader.readAsDataURL(blob);
     });
 
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
+    await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {
@@ -38,18 +39,17 @@ async function uploadToDrive(blob) {
       })
     });
 
-    console.log("Upload request sent:", response.type);
-
     statusText.textContent =
-      "Request sent. Check Google Apps Script executions.";
+      "Upload request sent! Checking Google Drive...";
 
   } catch (error) {
     console.error("Upload error:", error);
 
     statusText.textContent =
-      "Upload request failed. Check your connection.";
+      "Upload failed. Please try again.";
   }
 }
+
 
 
 
