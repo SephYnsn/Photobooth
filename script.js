@@ -7,10 +7,48 @@ const captureBtn = document.getElementById('captureBtn');
 const retakeBtn = document.getElementById('retakeBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const statusText = document.getElementById('status');
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybXVDEXThvC002K2bYZ8f66SPIF0Ds1Jkoue63oo3Ku9H3UCdHpc3Aw0yV7OOLWW-C7g/exec";
 
 let stream = null;
 let selectedFilter = 'none';
 let photoUrl = null;
+
+
+async function uploadToDrive(blob) {
+  statusText.textContent = "Uploading photo to Google Drive...";
+
+  try {
+    const reader = new FileReader();
+
+    const imageData = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify({
+        image: imageData
+      })
+    });
+
+    // no-cors responses cannot expose the server's actual result.
+    statusText.textContent =
+      "Upload request sent! Check Google Drive for your photo.";
+
+  } catch (error) {
+    console.error(error);
+    statusText.textContent =
+      "Upload failed. Please try again.";
+  }
+}
+
+
 
 async function startCamera() {
   try {
@@ -65,6 +103,7 @@ function capturePhoto() {
 
   if (photoUrl) URL.revokeObjectURL(photoUrl);
   canvas.toBlob(blob => {
+    uploadToDrive(blob);
     if (!blob) {
       statusText.textContent = 'Could not create the photo. Please try again.';
       return;
