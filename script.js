@@ -14,8 +14,9 @@ let selectedFilter = 'none';
 let photoUrl = null;
 
 
+
 async function uploadToDrive(blob) {
-  statusText.textContent = "Uploading photo to Google Drive...";
+  statusText.textContent = "Uploading to Google Drive...";
 
   try {
     const reader = new FileReader();
@@ -26,7 +27,7 @@ async function uploadToDrive(blob) {
       reader.readAsDataURL(blob);
     });
 
-    await fetch(GOOGLE_SCRIPT_URL, {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {
@@ -37,14 +38,16 @@ async function uploadToDrive(blob) {
       })
     });
 
-    // no-cors responses cannot expose the server's actual result.
+    console.log("Upload request sent:", response.type);
+
     statusText.textContent =
-      "Upload request sent! Check Google Drive for your photo.";
+      "Request sent. Check Google Apps Script executions.";
 
   } catch (error) {
-    console.error(error);
+    console.error("Upload error:", error);
+
     statusText.textContent =
-      "Upload failed. Please try again.";
+      "Upload request failed. Check your connection.";
   }
 }
 
@@ -103,7 +106,7 @@ function capturePhoto() {
 
   if (photoUrl) URL.revokeObjectURL(photoUrl);
   canvas.toBlob(blob => {
-    uploadToDrive(blob);
+    
     if (!blob) {
       statusText.textContent = 'Could not create the photo. Please try again.';
       return;
@@ -120,6 +123,7 @@ function capturePhoto() {
     downloadBtn.classList.remove('disabled');
     downloadBtn.setAttribute('aria-disabled', 'false');
     statusText.textContent = 'Photo captured! Download it or retake your picture.';
+    uploadToDrive(blob);
   }, 'image/png');
 }
 
