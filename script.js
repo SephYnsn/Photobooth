@@ -355,3 +355,34 @@ window.addEventListener("beforeunload", () => {
   if (stream) stream.getTracks().forEach(t => t.stop());
   if (finalUrl) URL.revokeObjectURL(finalUrl);
 });
+
+
+
+
+
+
+// =========================================================
+// WELCOME SCREEN SLIDESHOW
+// =========================================================
+const slideshowImg = $("welcomeSlideshow");
+
+if (slideshowImg) {
+  // Extract all the template URLs from our templates object
+  const templateUrls = Object.values(templates).map(t => t.bgUrl);
+  let slideIndex = 0;
+
+  if (templateUrls.length > 1) {
+    setInterval(() => {
+      // 1. Fade out
+      slideshowImg.style.opacity = 0;
+      
+      // 2. Wait for fade, swap image, fade back in
+      setTimeout(() => {
+        slideIndex = (slideIndex + 1) % templateUrls.length;
+        slideshowImg.src = templateUrls[slideIndex];
+        slideshowImg.style.opacity = 1;
+      }, 500); // 300ms matches the CSS transition time
+      
+    }, 5000); // Change image every 3 seconds
+  }
+}
