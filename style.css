@@ -824,7 +824,7 @@ footer span {
 /* The class we add with JS to trigger the print */
 /* Changed to 7s with an ease-in-out curve for mechanical pacing */
 .printing-paper.print-out {
-  animation: slideDownOut 7s cubic-bezier(0.42, 0, 0.58, 1) forwards; 
+  animation: slideDownOut 9s cubic-bezier(0.42, 0, 0.58, 1) forwards; 
 }
 
 @keyframes slideDownOut {
@@ -845,6 +845,44 @@ footer span {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.2; }
 }
+
+
+
+/* =========================================
+   SCREEN TRANSITIONS
+   ========================================= */
+/* This automatically plays whenever a screen loses the 'hidden' class */
+.screen {
+  animation: screenFadeIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+/* We will apply this via JS right before hiding a screen */
+.screen.fade-out {
+  animation: screenFadeOut 0.5s ease-in forwards;
+}
+
+@keyframes screenFadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes screenFadeOut {
+  from { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+  to { 
+    opacity: 0; 
+    transform: translateY(-15px); 
+  }
+}
+
 
 /* iPAD & TABLET OPTIMIZATION */
 @media (max-width: 1024px) {
