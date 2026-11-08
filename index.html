@@ -32,6 +32,40 @@
       </div>
     </section>
 
+
+    <!-- 1.5 TICKET SCREEN (NUMPAD) -->
+    <section id="ticketScreen" class="screen hidden">
+      <div class="section-heading">
+        <p class="eyebrow">ACCESS REQUIRED</p>
+        <h2>Enter <em>Press Pass</em></h2>
+        <p>Type your numeric ticket code to unlock the booth.</p>
+      </div>
+      
+      <div class="numpad-container">
+        <div id="ticketDisplay" class="numpad-display">_ _ _ _ _ _</div>
+        <p id="ticketError" class="status" style="color: #d00; font-weight: bold; text-align: center; height: 16px; margin-bottom: 10px;"></p>
+        
+        <div class="numpad-grid">
+          <button class="num-btn">1</button>
+          <button class="num-btn">2</button>
+          <button class="num-btn">3</button>
+          <button class="num-btn">4</button>
+          <button class="num-btn">5</button>
+          <button class="num-btn">6</button>
+          <button class="num-btn">7</button>
+          <button class="num-btn">8</button>
+          <button class="num-btn">9</button>
+          <button class="num-btn btn-del" id="btnDel">DEL</button>
+          <button class="num-btn">0</button>
+          <button class="num-btn btn-enter" id="btnEnter">GO</button>
+        </div>
+      </div>
+
+      <div class="center-actions">
+        <button id="backFromTicketBtn" class="btn btn-text">BACK TO COVER</button>
+      </div>
+    </section>
+
     <!-- 2. TEMPLATE SELECTION SCREEN -->
     <section id="templateScreen" class="screen hidden">
       <div class="section-heading">
@@ -81,7 +115,7 @@
         </div>
         <aside class="settings-card">
           <!-- NEW: Live Print Preview -->
-          
+
           <div>
             <p class="control-label">LIVE PREVIEW</p>
             <div class="live-preview-box">
