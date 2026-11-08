@@ -123,7 +123,7 @@ document.querySelectorAll(".template-card").forEach(card => {
   card.addEventListener("click", async () => {
     selectedTemplateId = card.dataset.template;
     const templateData = templates[selectedTemplateId];
-    shotCounter.textContent = `EXPOSURE 0 / ${templateData.shotsRequired}`;
+    shotCounter.textContent = `SHOTS 0 / ${templateData.shotsRequired}`;
     
     // BUG FIX: Reset the button and text for the new session
     beginSessionBtn.disabled = false;
@@ -221,7 +221,7 @@ async function startSession() {
       await countdown();
       
       shots.push(captureFrame());
-      shotCounter.textContent = `EXPOSURE ${shots.length} / ${totalShots}`;
+      shotCounter.textContent = `SHOTS ${shots.length} / ${totalShots}`;
       
       shotFlash.classList.remove("flash");
       void shotFlash.offsetWidth; // Trigger reflow
