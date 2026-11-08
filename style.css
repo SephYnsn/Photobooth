@@ -668,66 +668,22 @@ footer span {
   margin-top: 20px;
 }
 
-/* Abstract Template Preview Icons */
-.template-preview {
-  width: 140px;
-  height: 180px;
+/* Actual Template Preview Images */
+.template-preview-img {
+  height: 180px; /* Keeps the cards a uniform size */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
   border: 2px solid var(--ink);
-  background: var(--paper);
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  box-shadow: 4px 4px 0px rgba(17,17,17,0.2);
-}
-
-.strip-preview-icon {
-  width: 60px;
-  gap: 8px;
-}
-
-.tp-box {
-  background: var(--soft);
-  border: 1px solid var(--ink);
-  width: 100%;
-  flex: 1;
-}
-
-.a4-preview-icon {
-  width: 130px;
-  align-items: center;
-  gap: 5px;
-}
-
-.tp-header {
-  width: 80%;
-  height: 15px;
-  background: var(--ink);
+  /* The light blue background will show through the transparent photo holes in your PNG! */
+  background: var(--soft); 
+  box-shadow: 4px 4px 0px rgba(0, 51, 170, 0.2);
   margin-bottom: 5px;
+  transition: all 0.1s;
 }
 
-.tp-headline {
-  width: 100%;
-  height: 8px;
-  background: var(--muted);
-  margin-bottom: 10px;
-}
-
-.tp-box.large {
-  flex: none;
-  height: 70px;
-  margin-bottom: 10px;
-}
-
-.tp-columns {
-  display: flex;
-  gap: 5px;
-  width: 100%;
-  flex: 1;
-}
-
-.tp-col {
-  flex: 1;
-  background: var(--soft);
+.template-card:hover .template-preview-img {
+  box-shadow: 2px 2px 0px rgba(0, 51, 170, 0.2);
 }
 
 
