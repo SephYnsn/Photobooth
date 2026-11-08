@@ -62,16 +62,15 @@ const templates = {
     name: "Front Page1",
     shotsRequired: 2,
     bgUrl: "assets/newspaper_template2.png", // Name of your transparent Canva PNG in the folder
-    width: 1080,
-    height: 1527,
+    width:  794 ,
+    height: 1123,
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
-      { x: 30, y: 150, w: 660, h: 400 },
-      { x: 30, y: 580, w: 660, h: 400 },
-      { x: 30, y: 1010, w: 660, h: 400 },
-      { x: 30, y: 1440, w: 660, h: 400 }
+      { x: 45.42992125984252, y: 225.37322834645673, w: 498.14173228346465, h: 389.25354330708666 },
+      { x: 45.42992125984252, y: 766.8661417322836, w: 249.25984251968507, h: 255.00472440944884 },
+      
     ]
-  },
+  }, 
   front_page1: {
     name: "Front Page2",
     shotsRequired: 1,
