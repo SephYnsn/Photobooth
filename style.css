@@ -210,7 +210,7 @@ h1 em, h2 em {
 .sticker {
   position: absolute;
   color: var(--ink);
-  font-size: 50px;
+  font-size: 40px;
   background: var(--paper);
   border: 2px solid var(--ink);
   border-radius: 50%;
