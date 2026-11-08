@@ -34,7 +34,7 @@ const downloadBtn = $("downloadBtn"),
 // State
 let stream = null, 
     selectedFilter = "bw",
-    selectedTimer = 3, // NEW: Default timer is 3 seconds
+    selectedTimer = 10, // NEW: Default timer is 3 seconds
     selectedTemplateId = "classic_strip",
     shots = [], 
     finalBlob = null, 
@@ -52,9 +52,27 @@ const loadImage = src => new Promise((res, rej) => {
   img.src = src;
 });
 
-const showScreen = s => {
-  // Add printingScreen here so it correctly hides!
-  [welcomeScreen, ticketScreen, templateScreen, cameraScreen, printingScreen, previewScreen].forEach(x => x.classList.add("hidden"));
+const showScreen = async (s) => {
+  const allScreens = [welcomeScreen, ticketScreen, templateScreen, cameraScreen, printingScreen, previewScreen];
+  
+  // Find which screens are currently visible
+  const activeScreens = allScreens.filter(x => !x.classList.contains("hidden"));
+  
+  // 1. Add the fade-out class to the active screens
+  activeScreens.forEach(x => x.classList.add("fade-out"));
+  
+  // 2. Wait for the CSS fade-out animation to finish (200ms matches the CSS)
+  if (activeScreens.length > 0) {
+    await wait(200); 
+  }
+  
+  // 3. Hide all screens and clean up the fade-out class
+  allScreens.forEach(x => {
+    x.classList.add("hidden");
+    x.classList.remove("fade-out");
+  });
+  
+  // 4. Show the new screen (The CSS screenFadeIn animation plays automatically!)
   s.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
@@ -412,7 +430,7 @@ async function startSession() {
       shotFlash.classList.add("flash");
       
       // Wait a moment before starting the next countdown (if not the last shot)
-      if (i < totalShots - 1) await wait(900);
+      if (i < totalShots - 1) await wait(1000);
     }
     
     cameraStatus.textContent = "Developing your print...";
@@ -445,6 +463,8 @@ async function startSession() {
     setTimeout(() => {
       showScreen(previewScreen);
       uploadStrip();
+
+      printingPaper.classList.remove("print-out");
     }, 7500); 
     
   } catch (e) {
