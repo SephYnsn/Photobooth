@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&display=swap');
 
 :root {
-  --ink: #111111;
-  --muted: #4a4a4a;
-  --paper: #eee9dd;
-  --card: #f5f1e8;
-  --accent: #111111;
-  --line: #111111;
-  --soft: #dbd5c6;
+  --ink: #0033aa; /* Deep retro azure blue */
+  --muted: #6688cc; /* Muted cool blue for secondary text */
+  --paper: #ffffff; /* Crisp white background */
+  --card: #f6f9ff; /* Extremely faint blue for cards */
+  --accent: #0050ff; /* Bright vibrant azure for accents */
+  --line: #0033aa; /* Matching blue for structural borders */
+  --soft: #d5e2ff; /* Light icy blue for fills and secondary buttons */
 }
 
 * {
@@ -189,7 +189,8 @@ h1 em, h2 em {
   position: relative;
   display: grid;
   place-items: center;
-  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="%23111111" fill-opacity="0.1"/></svg>');
+  /* Updated to use azure blue dots */
+  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="%230033aa" fill-opacity="0.15"/></svg>');
   border: 2px solid var(--ink);
   box-shadow: 6px 6px 0px var(--ink);
 }
@@ -210,10 +211,10 @@ h1 em, h2 em {
 }
 
 /* Grayscale replacements for the mini photos */
-.mini-one { background: linear-gradient(135deg, #a0a0a0, #555555); }
-.mini-two { background: linear-gradient(135deg, #cfcfcf, #888888); }
-.mini-three { background: linear-gradient(135deg, #707070, #bbbbbb); }
-.mini-four { background: linear-gradient(135deg, #999999, #444444); }
+.mini-one { background: linear-gradient(135deg, #88aaff, #4477dd); }
+.mini-two { background: linear-gradient(135deg, #cce0ff, #77aaff); }
+.mini-three { background: linear-gradient(135deg, #5588ee, #1144bb); }
+.mini-four { background: linear-gradient(135deg, #99ccee, #3366cc); }
 
 .mini-caption {
   text-align: center;
@@ -430,9 +431,10 @@ video {
 .strip-wrap {
   display: flex;
   justify-content: center;
-  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h20v20H0z" fill="%23dbd5c6"/><circle cx="2" cy="2" r="1" fill="%23111111" fill-opacity="0.1"/></svg>');
+  /* Updated to icy blue fill with azure dots */
+  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h20v20H0z" fill="%23d5e2ff"/><circle cx="2" cy="2" r="1" fill="%230033aa" fill-opacity="0.15"/></svg>');
   border: 2px solid var(--ink);
-  box-shadow: inset 4px 4px 0px rgba(17,17,17,0.1);
+  box-shadow: inset 4px 4px 0px rgba(0, 51, 170, 0.1);
   padding: 30px;
 }
 
