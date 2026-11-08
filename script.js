@@ -4,7 +4,8 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyadSLavPpfut
 const $ = id => document.getElementById(id);
 
 // Screens
-const welcomeScreen = $("welcomeScreen"), 
+const welcomeScreen = $("welcomeScreen"),
+      ticketScreen = $("ticketScreen"),
       templateScreen = $("templateScreen"),
       cameraScreen = $("cameraScreen"), 
       previewScreen = $("previewScreen");
@@ -40,6 +41,8 @@ let stream = null,
     finalUrl = null, 
     uploadToken = null, 
     busy = false;
+    activeCode = "",       // Stores the validated ticket code
+    currentInput = "";
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const loadImage = src => new Promise((res, rej) => {
@@ -50,7 +53,8 @@ const loadImage = src => new Promise((res, rej) => {
 });
 
 const showScreen = s => {
-  [welcomeScreen, templateScreen, cameraScreen, previewScreen].forEach(x => x.classList.add("hidden"));
+  // Add ticketScreen here so it correctly hides!
+  [welcomeScreen, ticketScreen, templateScreen, cameraScreen, previewScreen].forEach(x => x.classList.add("hidden"));
   s.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
@@ -148,6 +152,7 @@ async function startLivePreviewLoop() {
     ctx.fillRect(0, 0, livePreviewCanvas.width, livePreviewCanvas.height);
 
     // 2. Draw slots (Captured photos + Live Video)
+   // 2. Draw slots (Captured photos + Live Video)
     currentTemplate.slots.forEach((slot, i) => {
       if (shots[i]) {
         // Draw already taken photo
@@ -156,7 +161,16 @@ async function startLivePreviewLoop() {
       } else if (i === shots.length && stream && stream.active) {
         // Draw LIVE VIDEO feed in the next available slot
         ctx.save();
-        ctx.filter = video.style.filter; // Apply the selected print filter
+        
+        // FIX: Provide the exact string directly to the canvas instead of reading the video style
+        const filterStrings = {
+          original: "none", 
+          bw: "grayscale(1)", 
+          vintage: "sepia(.8) contrast(1.1)",
+          warm: "sepia(.3) saturate(1.2)", 
+          vivid: "saturate(1.5) contrast(1.1)"
+        };
+        ctx.filter = filterStrings[selectedFilter]; 
         
         // Mirror the live video so it acts like a mirror
         ctx.translate(slot.x + slot.w, slot.y);
@@ -180,7 +194,13 @@ async function startLivePreviewLoop() {
 // NAVIGATION & EVENTS
 // =========================================================
 
-$("startBtn").addEventListener("click", () => showScreen(templateScreen));
+$("startBtn").addEventListener("click", () => {
+  currentInput = "";
+  $("ticketDisplay").textContent = "_ _ _ _ _ _";
+  $("ticketError").textContent = "";
+  showScreen(ticketScreen);
+});
+$("backFromTicketBtn").addEventListener("click", () => showScreen(welcomeScreen));
 $("backToWelcomeBtn").addEventListener("click", () => showScreen(welcomeScreen));
 $("backToTemplatesBtn").addEventListener("click", () => showScreen(templateScreen));
 
@@ -238,6 +258,77 @@ document.querySelectorAll(".filter").forEach(b => b.addEventListener("click", ()
     warm: "sepia(.3) saturate(1.2)", vivid: "saturate(1.5) contrast(1.1)"
   })[selectedFilter];
 }));
+
+
+
+
+
+// =========================================================
+// TICKET & NUMPAD LOGIC
+// =========================================================
+document.querySelectorAll(".num-btn:not(#btnDel):not(#btnEnter)").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (currentInput.length < 10) {
+      currentInput += btn.textContent;
+      $("ticketDisplay").textContent = currentInput;
+      $("ticketError").textContent = "";
+    }
+  });
+});
+
+$("btnDel").addEventListener("click", () => {
+  currentInput = currentInput.slice(0, -1);
+  $("ticketDisplay").textContent = currentInput || "_ _ _ _ _ _";
+});
+
+function verifyTicketOnServer(code) {
+  return new Promise((resolve, reject) => {
+    const cb = "verifyCb_" + Date.now();
+    const s = document.createElement("script");
+    let done = false;
+    const timer = setTimeout(() => finish(new Error("Timeout waiting for verification")), 8000);
+    
+    function finish(err, data) {
+      if (done) return; 
+      done = true; 
+      clearTimeout(timer); 
+      delete window[cb]; 
+      s.remove();
+      err ? reject(err) : resolve(data);
+    }
+    
+    window[cb] = data => finish(null, data);
+    s.onerror = () => finish(new Error("Network error"));
+    s.src = `${GOOGLE_SCRIPT_URL}?action=verify&code=${encodeURIComponent(code)}&callback=${cb}&_=${Date.now()}`;
+    document.body.appendChild(s);
+  });
+}
+
+$("btnEnter").addEventListener("click", async () => {
+  if (!currentInput) return;
+  
+  $("ticketDisplay").textContent = "VERIFYING...";
+  $("ticketError").textContent = "";
+  const enterBtn = $("btnEnter");
+  enterBtn.disabled = true;
+
+  try {
+    const result = await verifyTicketOnServer(currentInput);
+    if (result.valid) {
+      activeCode = currentInput; // Save the validated code!
+      showScreen(templateScreen);
+    } else {
+      $("ticketDisplay").textContent = currentInput;
+      $("ticketError").textContent = result.message || "Invalid Code";
+    }
+  } catch (e) {
+    $("ticketDisplay").textContent = currentInput;
+    $("ticketError").textContent = "Connection error. Try again.";
+  } finally {
+    enterBtn.disabled = false;
+  }
+});
+
 
 // =========================================================
 // CAMERA LOGIC
@@ -386,7 +477,13 @@ async function uploadStrip() {
     const dataUrl = await new Promise((resolve, reject) => {
       const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = () => reject(new Error("Could not read print.")); r.readAsDataURL(finalBlob);
     });
-    fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ image: dataUrl, token: uploadToken }) }).catch(console.warn);
+    // IN uploadStrip()
+    fetch(GOOGLE_SCRIPT_URL, { 
+      method: "POST", 
+      mode: "no-cors", 
+      headers: { "Content-Type": "text/plain" }, 
+      body: JSON.stringify({ image: dataUrl, token: uploadToken, ticketCode: activeCode }) // <-- Added activeCode here
+    }).catch(console.warn);
     
     let result = null;
     for (let i = 0; i < 20; i++) {
@@ -407,7 +504,11 @@ function showUploadError(message) { uploadState.classList.add("hidden"); uploadE
 $("retryUploadBtn").addEventListener("click", uploadStrip);
 
 // Return to front page after session
-$("againBtn").addEventListener("click", () => { showScreen(welcomeScreen); });
+// Return to front page after session to require a new ticket
+$("againBtn").addEventListener("click", () => { 
+  activeCode = ""; // Clear the used ticket!
+  showScreen(welcomeScreen); 
+});
 
 window.addEventListener("beforeunload", () => {
   if (stream) stream.getTracks().forEach(t => t.stop());
