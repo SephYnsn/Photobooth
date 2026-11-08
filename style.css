@@ -538,6 +538,11 @@ video {
   margin-top: 15px;
   font-weight: bold;
   text-decoration: underline;
+  visibility: hidden;
+}
+
+#downloadBtn{
+  visibility: hidden;
 }
 
 .upload-error {
