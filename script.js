@@ -103,6 +103,17 @@ const templates = {
     slots: [
       { x: 80, y: 350, w: 920, h: 690 } // Just one photo slot for this template
     ]
+  },
+
+  wanted_poster: {
+    name: "Wanter Poster",
+    shotsRequired: 1,
+    bgUrl: "assets/wanted_template.png", // Name of your transparent Canva PNG in the folder
+    width: 794,
+    height: 1123,
+    slots: [
+      { x: 27.590551181102363, y: 224.27716535433075, w: 729.6, h: 499.5779527559056 } // Just one photo slot for this template
+    ]
   }
 };
 
