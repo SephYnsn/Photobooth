@@ -670,7 +670,7 @@ footer span {
 
 /* Actual Template Preview Images */
 .template-preview-img {
-  height: 180px; /* Keeps the cards a uniform size */
+  height: 250px; /* Keeps the cards a uniform size */
   width: auto;
   max-width: 100%;
   object-fit: contain;
