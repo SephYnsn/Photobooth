@@ -696,7 +696,69 @@ footer span {
 
 
 
+/* =========================================
+   NUMPAD SCREEN STYLES
+   ========================================= */
+.numpad-container {
+  max-width: 340px;
+  margin: 0 auto 30px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  padding: 25px;
+  box-shadow: 6px 6px 0px var(--ink);
+}
 
+.numpad-display {
+  background: var(--paper);
+  border: 2px inset var(--ink);
+  padding: 15px;
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 8px;
+  margin-bottom: 15px;
+  height: 72px;
+  font-weight: 900;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.num-btn {
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 24px;
+  font-family: 'DM Mono', monospace;
+  font-weight: bold;
+  padding: 15px 0;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.num-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--ink);
+}
+
+.btn-enter {
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 20px;
+}
+
+.btn-del {
+  background: var(--soft);
+  font-size: 20px;
+}
 
 
 
