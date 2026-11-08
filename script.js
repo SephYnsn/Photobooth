@@ -58,12 +58,12 @@ const showScreen = s => {
 // TEMPLATE REGISTRY (Configure your Canva PNGs here)
 // =========================================================
 const templates = {
-  classic_strip: {
-    name: "Classic Strip",
-    shotsRequired: 4,
-    bgUrl: "assets/classic_strip_template.png", // Name of your transparent Canva PNG in the folder
-    width: 720,
-    height: 1920,
+  front_page2: {
+    name: "Front Page1",
+    shotsRequired: 2,
+    bgUrl: "assets/newspaper_template2.png", // Name of your transparent Canva PNG in the folder
+    width: 1080,
+    height: 1527,
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
       { x: 30, y: 150, w: 660, h: 400 },
@@ -72,10 +72,10 @@ const templates = {
       { x: 30, y: 1440, w: 660, h: 400 }
     ]
   },
-  front_page: {
-    name: "Front Page",
+  front_page1: {
+    name: "Front Page2",
     shotsRequired: 1,
-    bgUrl: "assets/newspaper_template.png", // Name of your transparent Canva PNG in the folder
+    bgUrl: "assets/newspaper_template1.png", // Name of your transparent Canva PNG in the folder
     width: 1080,
     height: 1527,
     slots: [
