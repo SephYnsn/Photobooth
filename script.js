@@ -17,7 +17,7 @@ const beginSessionBtn = $("beginSessionBtn"),
       countdownEl = $("countdown"), 
       shotCounter = $("shotCounter"),
       backToTemplatesBtn = $("backToTemplatesBtn"); // NEW: Grab the back button
-      livePreviewImg = $("livePreviewImg"); // NEW: Grab the preview image
+      livePreviewCanvas = $("livePreviewCanvas"); // NEW: Grab the preview image
 const shotFlash = $("shotFlash"), 
       stripPreview = $("stripPreview"), 
       uploadState = $("uploadState");
@@ -85,56 +85,96 @@ const templates = {
 };
 
 // Universal rendering engine for Canva PNGs (Anti-Squish Version)
+// Helper: Anti-Squish Cropping Logic (Handles both Static Images and Live Video)
+function drawCropped(ctx, source, sx, sy, sw, sh) {
+  const srcW = source.videoWidth || source.width;
+  const srcH = source.videoHeight || source.height;
+  if (!srcW || !srcH) return; // Prevent errors if video isn't ready
+
+  const sourceRatio = srcW / srcH;
+  const targetRatio = sw / sh;
+  
+  let cropX = 0, cropY = 0, cropW = srcW, cropH = srcH;
+
+  if (sourceRatio > targetRatio) {
+    cropW = srcH * targetRatio;
+    cropX = (srcW - cropW) / 2;
+  } else {
+    cropH = cropW / targetRatio;
+    cropY = (srcH - cropH) / 2;
+  }
+
+  ctx.drawImage(source, cropX, cropY, cropW, cropH, sx, sy, sw, sh);
+}
+
+// Generates the final static print for download/upload
 async function renderTemplate(template, capturedShots) {
   const c = document.createElement("canvas");
   c.width = template.width;
   c.height = template.height;
   const ctx = c.getContext("2d");
 
-  // Solid white background base so transparent edges don't show black
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, c.width, c.height);
 
-  // 1. Draw the camera shots FIRST (so they sit BEHIND the Canva frame cutouts)
   template.slots.forEach((slot, index) => {
     if (capturedShots[index]) {
-      const shot = capturedShots[index];
-      
-      // Calculate aspect ratios
-      const sourceRatio = shot.width / shot.height;
-      const targetRatio = slot.w / slot.h;
-      
-      let cropX = 0, cropY = 0, cropW = shot.width, cropH = shot.height;
-
-      // Determine how to crop the image so it doesn't squish
-      if (sourceRatio > targetRatio) {
-        // Photo is wider than the slot -> Crop the left and right sides
-        cropW = shot.height * targetRatio;
-        cropX = (shot.width - cropW) / 2; // Center it horizontally
-      } else {
-        // Photo is taller than the slot -> Crop the top and bottom
-        cropH = shot.width / targetRatio;
-        cropY = (shot.height - cropH) / 2; // Center it vertically
-      }
-
-      // Draw the cropped image into the exact slot
-      ctx.drawImage(
-        shot, 
-        cropX, cropY, cropW, cropH, // What part of the photo to use
-        slot.x, slot.y, slot.w, slot.h  // Where to put it on the template
-      );
+      drawCropped(ctx, capturedShots[index], slot.x, slot.y, slot.w, slot.h);
     }
   });
 
-  // 2. Draw the Canva PNG overlay over the top of the photos
-  try {
-    const bgImg = await loadImage(template.bgUrl);
-    ctx.drawImage(bgImg, 0, 0, template.width, template.height);
-  } catch (err) {
-    console.error("Make sure your template PNGs are in the same folder as index.html!", err);
+  if (!template.imgObj) template.imgObj = await loadImage(template.bgUrl);
+  ctx.drawImage(template.imgObj, 0, 0, template.width, template.height);
+  return c;
+}
+
+// NEW: Real-Time Canvas Loop for the Sidebar
+let previewLoopId = null;
+
+async function startLivePreviewLoop() {
+  const currentTemplate = templates[selectedTemplateId];
+  const ctx = livePreviewCanvas.getContext("2d");
+  livePreviewCanvas.width = currentTemplate.width;
+  livePreviewCanvas.height = currentTemplate.height;
+
+  // Pre-load the Canva frame so it doesn't flicker
+  if (!currentTemplate.imgObj) {
+    currentTemplate.imgObj = await loadImage(currentTemplate.bgUrl);
   }
 
-  return c;
+  function loop() {
+    // 1. Draw solid white base
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, livePreviewCanvas.width, livePreviewCanvas.height);
+
+    // 2. Draw slots (Captured photos + Live Video)
+    currentTemplate.slots.forEach((slot, i) => {
+      if (shots[i]) {
+        // Draw already taken photo
+        ctx.filter = "none";
+        drawCropped(ctx, shots[i], slot.x, slot.y, slot.w, slot.h);
+      } else if (i === shots.length && stream && stream.active) {
+        // Draw LIVE VIDEO feed in the next available slot
+        ctx.save();
+        ctx.filter = video.style.filter; // Apply the selected print filter
+        
+        // Mirror the live video so it acts like a mirror
+        ctx.translate(slot.x + slot.w, slot.y);
+        ctx.scale(-1, 1);
+        drawCropped(ctx, video, 0, 0, slot.w, slot.h);
+        
+        ctx.restore();
+      }
+    });
+
+    // 3. Draw Canva PNG overlay
+    ctx.drawImage(currentTemplate.imgObj, 0, 0, livePreviewCanvas.width, livePreviewCanvas.height);
+
+    previewLoopId = requestAnimationFrame(loop);
+  }
+
+  if (previewLoopId) cancelAnimationFrame(previewLoopId);
+  loop();
 }
 // =========================================================
 // NAVIGATION & EVENTS
@@ -151,16 +191,16 @@ document.querySelectorAll(".template-card").forEach(card => {
     selectedTemplateId = card.dataset.template;
     const templateData = templates[selectedTemplateId];
     
-    // Clear shots and update the live preview immediately
     shots = [];
-    await updateLivePreview();
-    
     shotCounter.textContent = `SHOTS 0 / ${templateData.shotsRequired}`;
     beginSessionBtn.disabled = false;
     cameraStatus.textContent = "Camera ready! Start your press session.";
     
     showScreen(cameraScreen);
     if (!stream || !stream.active) await startCamera();
+    
+    // NEW: Start the live drawing loop
+    startLivePreviewLoop();
   });
 });
 
@@ -248,20 +288,6 @@ function toBlob(c) {
 }
 
 
-async function updateLivePreview() {
-  const currentTemplate = templates[selectedTemplateId];
-  const renderedCanvas = await renderTemplate(currentTemplate, shots);
-  const blob = await toBlob(renderedCanvas);
-  
-  if (livePreviewImg.dataset.url) {
-    URL.revokeObjectURL(livePreviewImg.dataset.url);
-  }
-  
-  const url = URL.createObjectURL(blob);
-  livePreviewImg.dataset.url = url;
-  livePreviewImg.src = url;
-}
-
 
 
 
@@ -270,7 +296,7 @@ async function startSession() {
   if (busy || !stream || !video.videoWidth) return;
   busy = true;
   beginSessionBtn.disabled = true;
-  backToTemplatesBtn.disabled = true; // BUG FIX: Lock the back button during session
+  backToTemplatesBtn.disabled = true; // Lock the layout button during session
   shots = [];
   
   const currentTemplate = templates[selectedTemplateId];
@@ -281,46 +307,50 @@ async function startSession() {
   try {
     for (let i = 0; i < totalShots; i++) {
       cameraStatus.textContent = `Get ready for exposure ${i + 1} of ${totalShots}...`;
+      
+      // Wait for the countdown
       await countdown();
       
+      // Take the photo and update the counter
       shots.push(captureFrame());
       shotCounter.textContent = `SHOTS ${shots.length} / ${totalShots}`;
-
-      await updateLivePreview();
       
+      // Fire the camera flash
       shotFlash.classList.remove("flash");
-      void shotFlash.offsetWidth; 
+      void shotFlash.offsetWidth; // Trigger reflow so the animation restarts
       shotFlash.classList.add("flash");
       
-      shotFlash.classList.remove("flash");
-      void shotFlash.offsetWidth; // Trigger reflow
-      shotFlash.classList.add("flash");
-      
+      // Wait a moment before starting the next countdown (if not the last shot)
       if (i < totalShots - 1) await wait(900);
     }
     
     cameraStatus.textContent = "Developing your print...";
     
+    // Render the final high-res PNG template + photos
     const renderedCanvas = await renderTemplate(currentTemplate, shots);
     finalBlob = await toBlob(renderedCanvas);
     
+    // Create the download URL
     if (finalUrl) URL.revokeObjectURL(finalUrl);
     finalUrl = URL.createObjectURL(finalBlob);
     
+    // Show on preview screen
     stripPreview.src = finalUrl;
     downloadBtn.href = finalUrl;
     downloadBtn.classList.remove("disabled");
     downloadBtn.setAttribute("aria-disabled", "false");
     
+    // Move to the next screen and start Google Drive upload
     showScreen(previewScreen);
     uploadStrip();
+    
   } catch (e) {
-    console.error(e);
+    console.error("Camera session error:", e);
     cameraStatus.textContent = e.message;
     beginSessionBtn.disabled = false;
   } finally {
     busy = false;
-    backToTemplatesBtn.disabled = false; // BUG FIX: Unlock it when done
+    backToTemplatesBtn.disabled = false; // Unlock the layout button
   }
 }
 
