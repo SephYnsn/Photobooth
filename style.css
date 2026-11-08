@@ -360,15 +360,39 @@ video {
 .settings-card {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 15px; /* Reduced from 25px */
 }
 
 .control-label {
   color: var(--ink);
   display: block;
-  margin: 0 0 12px;
+  margin: 0 0 8px; /* Reduced from 12px */
   border-bottom: 1px solid var(--line);
-  padding-bottom: 5px;
+  padding-bottom: 4px;
+}
+
+.options-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px; /* Tighter gap */
+}
+
+/* New unified class for both Filters and Timers */
+.option-btn {
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 10px; /* Smaller padding for compactness */
+  font-size: 10px; /* Smaller font */
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.1s;
+}
+
+.option-btn.active {
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .filters {
@@ -395,12 +419,12 @@ video {
 
 .tip-box {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   border: 1px dashed var(--ink);
-  padding: 15px;
+  padding: 12px; /* Tighter padding */
   color: var(--ink);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.4;
   background: var(--paper);
 }
 
@@ -624,6 +648,7 @@ footer span {
   font-weight: 900;
   margin: 10px 0 0;
   text-transform: uppercase;
+  color: #0033aa;
 }
 
 .template-card p {
@@ -698,4 +723,36 @@ footer span {
 .tp-col {
   flex: 1;
   background: var(--soft);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* iPAD & TABLET OPTIMIZATION */
+@media (max-width: 1024px) {
+  .app {
+    width: min(100% - 30px, 900px);
+  }
+  .screen {
+    padding: 15px 0 25px; /* Less vertical padding to prevent scrolling on iPad */
+  }
+  .booth-layout {
+    /* Slightly wider camera, tighter sidebar on iPad */
+    grid-template-columns: minmax(0, 1.5fr) minmax(220px, .5fr); 
+    gap: 20px;
+  }
+  .camera-card, .settings-card {
+    padding: 15px; /* Tighter box padding */
+  }
 }
