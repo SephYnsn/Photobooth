@@ -195,33 +195,16 @@ h1 em, h2 em {
   box-shadow: 6px 6px 0px var(--ink);
 }
 
-.mini-strip {
-  background: var(--paper);
-  padding: 15px 15px 12px;
-  width: 174px;
-  transform: rotate(-3deg);
+/* Template Slideshow on Welcome Screen */
+.slideshow-image {
+  max-height: 65%;
+  max-width: 65%;
+  object-fit: contain;
   border: 2px solid var(--ink);
-  box-shadow: 4px 4px 0px rgba(17,17,17,0.3);
-}
-
-.mini-photo {
-  height: 76px;
-  margin-bottom: 8px;
-  border: 1px solid var(--ink);
-}
-
-/* Grayscale replacements for the mini photos */
-.mini-one { background: linear-gradient(135deg, #88aaff, #4477dd); }
-.mini-two { background: linear-gradient(135deg, #cce0ff, #77aaff); }
-.mini-three { background: linear-gradient(135deg, #5588ee, #1144bb); }
-.mini-four { background: linear-gradient(135deg, #99ccee, #3366cc); }
-
-.mini-caption {
-  text-align: center;
-  font: 10px 'DM Mono', monospace;
-  letter-spacing: .1em;
-  padding-top: 5px;
-  font-weight: bold;
+  background: var(--paper); /* Fills transparent holes with white */
+  box-shadow: 6px 6px 0px rgba(0, 51, 170, 0.4);
+  transition: opacity 0.5s ease-in-out;
+  transform: rotate(-5deg); /* Keeps a slightly playful, organic angle */
 }
 
 .sticker {
@@ -706,7 +689,7 @@ footer span {
     width: min(100% - 30px, 900px);
   }
   .screen {
-    padding: 15px 0 25px; /* Less vertical padding to prevent scrolling on iPad */
+    padding: 5px 0 25px; /* Less vertical padding to prevent scrolling on iPad */
   }
   .booth-layout {
     /* Slightly wider camera, tighter sidebar on iPad */
