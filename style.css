@@ -366,7 +366,7 @@ video {
   background: transparent;
   color: var(--ink);
   padding: 6px 10px; /* Smaller padding for compactness */
-  font-size: 10px; /* Smaller font */
+  font-size: 15px; /* Smaller font */
   font-family: 'DM Mono', monospace;
   cursor: pointer;
   text-transform: uppercase;
