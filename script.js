@@ -53,8 +53,8 @@ const loadImage = src => new Promise((res, rej) => {
 });
 
 const showScreen = s => {
-  // Add ticketScreen here so it correctly hides!
-  [welcomeScreen, ticketScreen, templateScreen, cameraScreen, previewScreen].forEach(x => x.classList.add("hidden"));
+  // Add printingScreen here so it correctly hides!
+  [welcomeScreen, ticketScreen, templateScreen, cameraScreen, printingScreen, previewScreen].forEach(x => x.classList.add("hidden"));
   s.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
@@ -421,19 +421,31 @@ async function startSession() {
     const renderedCanvas = await renderTemplate(currentTemplate, shots);
     finalBlob = await toBlob(renderedCanvas);
     
+   // (Inside startSession() try block...)
     // Create the download URL
     if (finalUrl) URL.revokeObjectURL(finalUrl);
     finalUrl = URL.createObjectURL(finalBlob);
     
-    // Show on preview screen
+    // Set both the printer image and the final preview image
+    printingPaper.src = finalUrl;
     stripPreview.src = finalUrl;
     downloadBtn.href = finalUrl;
     downloadBtn.classList.remove("disabled");
     downloadBtn.setAttribute("aria-disabled", "false");
     
-    // Move to the next screen and start Google Drive upload
-    showScreen(previewScreen);
-    uploadStrip();
+    // NEW: Show the printing animation screen!
+    showScreen(printingScreen);
+    
+    // Trigger the slide-out CSS animation
+    printingPaper.classList.remove("print-out");
+    void printingPaper.offsetWidth; // reflow
+    printingPaper.classList.add("print-out");
+    
+    // Wait for the animation to finish (7.5 seconds), then go to preview & upload
+    setTimeout(() => {
+      showScreen(previewScreen);
+      uploadStrip();
+    }, 7500); 
     
   } catch (e) {
     console.error("Camera session error:", e);
