@@ -77,7 +77,6 @@
     <!-- 3. CAMERA SCREEN -->
     <section id="cameraScreen" class="screen hidden">
       <div class="section-heading">
-        <p class="eyebrow">LOCAL HEADLINES</p>
         <h2>Ready, set, <em>smile!</em></h2>
         <p>Choose your ink, then take your photos for the press.</p>
       </div>
@@ -99,23 +98,36 @@
           </div>
         </div>
         <aside class="settings-card">
+          <!-- NEW: Timer Selection -->
           <div>
-            <p class="control-label">PRINT FILTER</p>
-            <div class="filters">
-              <button class="filter active" data-filter="bw">Newsprint (B&W)</button>
-              <button class="filter" data-filter="vintage">Sepia</button>
-              <button class="filter" data-filter="original">Color</button>
-              <button class="filter" data-filter="warm">Warm</button>
-              <button class="filter" data-filter="vivid">Vivid</button>
+            <p class="control-label">TIMER</p>
+            <div class="options-group">
+              <button class="option-btn timer-btn active" data-time="3">3s</button>
+              <button class="option-btn timer-btn" data-time="5">5s</button>
+              <button class="option-btn timer-btn" data-time="10">10s</button>
             </div>
           </div>
+
+          <!-- COMPACT: Filter Selection -->
+          <div>
+            <p class="control-label">PRINT FILTER</p>
+            <div class="options-group">
+              <button class="option-btn filter active" data-filter="bw">Newsprint</button>
+              <button class="option-btn filter" data-filter="vintage">Sepia</button>
+              <button class="option-btn filter" data-filter="original">Color</button>
+              <button class="option-btn filter" data-filter="warm">Warm</button>
+              <button class="option-btn filter" data-filter="vivid">Vivid</button>
+            </div>
+          </div>
+          
           <div class="tip-box">
             <span>☛</span>
-            <p><strong>Photographer's Tip:</strong><br>Find good lighting and get your besties in the frame!</p>
+            <p><strong>Tip:</strong> Find good lighting and get your besties in the frame!</p>
           </div>
-          <button id="beginSessionBtn" class="btn btn-primary" disabled>START SESSION <span>→</span></button>
+          
+          <button id="beginSessionBtn" class="btn btn-primary">START SESSION <span>→</span></button>
           <button id="backToTemplatesBtn" class="btn btn-text">CHANGE LAYOUT</button>
-          <p id="cameraStatus" class="status">Allow camera access when your browser asks.</p>
+          <p id="cameraStatus" class="status">Allow camera access when asked.</p>
         </aside>
       </div>
     </section>
