@@ -15,7 +15,8 @@ const video = $("video"),
       cameraStatus = $("cameraStatus");
 const beginSessionBtn = $("beginSessionBtn"), 
       countdownEl = $("countdown"), 
-      shotCounter = $("shotCounter");
+      shotCounter = $("shotCounter"),
+      backToTemplatesBtn = $("backToTemplatesBtn"); // NEW: Grab the back button
 const shotFlash = $("shotFlash"), 
       stripPreview = $("stripPreview"), 
       uploadState = $("uploadState");
@@ -25,9 +26,13 @@ const qrSection = $("qrSection"),
 const downloadBtn = $("downloadBtn"), 
       driveLink = $("driveLink");
 
+
+
+// State
 // State
 let stream = null, 
     selectedFilter = "bw",
+    selectedTimer = 3, // NEW: Default timer is 3 seconds
     selectedTemplateId = "classic_strip",
     shots = [], 
     finalBlob = null, 
@@ -134,6 +139,16 @@ document.querySelectorAll(".template-card").forEach(card => {
   });
 });
 
+
+// Handle Timer selection
+document.querySelectorAll(".timer-btn").forEach(b => b.addEventListener("click", () => {
+  selectedTimer = parseInt(b.dataset.time);
+  document.querySelectorAll(".timer-btn").forEach(x => x.classList.toggle("active", x === b));
+}));
+
+
+
+
 async function startCamera() {
   try {
     if (!navigator.mediaDevices?.getUserMedia) throw new Error("Camera access needs HTTPS or localhost.");
@@ -194,10 +209,14 @@ function captureFrame() {
 }
 
 async function countdown() {
-  for (let n = 3; n >= 1; n--) {
-    countdownEl.textContent = n; countdownEl.classList.remove("hidden"); await wait(850);
+  for (let n = selectedTimer; n >= 1; n--) {
+    countdownEl.textContent = n; 
+    countdownEl.classList.remove("hidden"); 
+    await wait(850);
   }
-  countdownEl.textContent = "📸"; await wait(250); countdownEl.classList.add("hidden");
+  countdownEl.textContent = "📸"; 
+  await wait(250); 
+  countdownEl.classList.add("hidden");
 }
 
 function toBlob(c) {
@@ -208,6 +227,7 @@ async function startSession() {
   if (busy || !stream || !video.videoWidth) return;
   busy = true;
   beginSessionBtn.disabled = true;
+  backToTemplatesBtn.disabled = true; // BUG FIX: Lock the back button during session
   shots = [];
   
   const currentTemplate = templates[selectedTemplateId];
@@ -232,7 +252,6 @@ async function startSession() {
     
     cameraStatus.textContent = "Developing your print...";
     
-    // Render the PNG template + photos
     const renderedCanvas = await renderTemplate(currentTemplate, shots);
     finalBlob = await toBlob(renderedCanvas);
     
@@ -252,6 +271,7 @@ async function startSession() {
     beginSessionBtn.disabled = false;
   } finally {
     busy = false;
+    backToTemplatesBtn.disabled = false; // BUG FIX: Unlock it when done
   }
 }
 
