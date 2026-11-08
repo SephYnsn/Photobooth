@@ -83,7 +83,7 @@ const templates = {
   }
 };
 
-// Universal rendering engine for Canva PNGs
+// Universal rendering engine for Canva PNGs (Anti-Squish Version)
 async function renderTemplate(template, capturedShots) {
   const c = document.createElement("canvas");
   c.width = template.width;
@@ -97,8 +97,31 @@ async function renderTemplate(template, capturedShots) {
   // 1. Draw the camera shots FIRST (so they sit BEHIND the Canva frame cutouts)
   template.slots.forEach((slot, index) => {
     if (capturedShots[index]) {
-      // Stretches/squishes the photo to perfectly fit the designated slot box
-      ctx.drawImage(capturedShots[index], slot.x, slot.y, slot.w, slot.h);
+      const shot = capturedShots[index];
+      
+      // Calculate aspect ratios
+      const sourceRatio = shot.width / shot.height;
+      const targetRatio = slot.w / slot.h;
+      
+      let cropX = 0, cropY = 0, cropW = shot.width, cropH = shot.height;
+
+      // Determine how to crop the image so it doesn't squish
+      if (sourceRatio > targetRatio) {
+        // Photo is wider than the slot -> Crop the left and right sides
+        cropW = shot.height * targetRatio;
+        cropX = (shot.width - cropW) / 2; // Center it horizontally
+      } else {
+        // Photo is taller than the slot -> Crop the top and bottom
+        cropH = shot.width / targetRatio;
+        cropY = (shot.height - cropH) / 2; // Center it vertically
+      }
+
+      // Draw the cropped image into the exact slot
+      ctx.drawImage(
+        shot, 
+        cropX, cropY, cropW, cropH, // What part of the photo to use
+        slot.x, slot.y, slot.w, slot.h  // Where to put it on the template
+      );
     }
   });
 
@@ -112,7 +135,6 @@ async function renderTemplate(template, capturedShots) {
 
   return c;
 }
-
 // =========================================================
 // NAVIGATION & EVENTS
 // =========================================================
