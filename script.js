@@ -196,7 +196,7 @@ async function startLivePreviewLoop() {
 
 $("startBtn").addEventListener("click", () => {
   currentInput = "";
-  $("ticketDisplay").textContent = "_ _ _ _ _ _";
+  $("ticketDisplay").textContent = "";
   $("ticketError").textContent = "";
   showScreen(ticketScreen);
 });
@@ -278,7 +278,7 @@ document.querySelectorAll(".num-btn:not(#btnDel):not(#btnEnter)").forEach(btn =>
 
 $("btnDel").addEventListener("click", () => {
   currentInput = currentInput.slice(0, -1);
-  $("ticketDisplay").textContent = currentInput || "_ _ _ _ _ _";
+  $("ticketDisplay").textContent = currentInput || "";
 });
 
 function verifyTicketOnServer(code) {
