@@ -17,6 +17,7 @@ const beginSessionBtn = $("beginSessionBtn"),
       countdownEl = $("countdown"), 
       shotCounter = $("shotCounter"),
       backToTemplatesBtn = $("backToTemplatesBtn"); // NEW: Grab the back button
+      livePreviewImg = $("livePreviewImg"); // NEW: Grab the preview image
 const shotFlash = $("shotFlash"), 
       stripPreview = $("stripPreview"), 
       uploadState = $("uploadState");
@@ -149,9 +150,12 @@ document.querySelectorAll(".template-card").forEach(card => {
   card.addEventListener("click", async () => {
     selectedTemplateId = card.dataset.template;
     const templateData = templates[selectedTemplateId];
-    shotCounter.textContent = `SHOTS 0 / ${templateData.shotsRequired}`;
     
-    // BUG FIX: Reset the button and text for the new session
+    // Clear shots and update the live preview immediately
+    shots = [];
+    await updateLivePreview();
+    
+    shotCounter.textContent = `SHOTS 0 / ${templateData.shotsRequired}`;
     beginSessionBtn.disabled = false;
     cameraStatus.textContent = "Camera ready! Start your press session.";
     
@@ -159,7 +163,6 @@ document.querySelectorAll(".template-card").forEach(card => {
     if (!stream || !stream.active) await startCamera();
   });
 });
-
 
 // Handle Timer selection
 document.querySelectorAll(".timer-btn").forEach(b => b.addEventListener("click", () => {
@@ -244,6 +247,25 @@ function toBlob(c) {
   return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("Could not create image.")), "image/png"));
 }
 
+
+async function updateLivePreview() {
+  const currentTemplate = templates[selectedTemplateId];
+  const renderedCanvas = await renderTemplate(currentTemplate, shots);
+  const blob = await toBlob(renderedCanvas);
+  
+  if (livePreviewImg.dataset.url) {
+    URL.revokeObjectURL(livePreviewImg.dataset.url);
+  }
+  
+  const url = URL.createObjectURL(blob);
+  livePreviewImg.dataset.url = url;
+  livePreviewImg.src = url;
+}
+
+
+
+
+
 async function startSession() {
   if (busy || !stream || !video.videoWidth) return;
   busy = true;
@@ -263,6 +285,12 @@ async function startSession() {
       
       shots.push(captureFrame());
       shotCounter.textContent = `SHOTS ${shots.length} / ${totalShots}`;
+
+      await updateLivePreview();
+      
+      shotFlash.classList.remove("flash");
+      void shotFlash.offsetWidth; 
+      shotFlash.classList.add("flash");
       
       shotFlash.classList.remove("flash");
       void shotFlash.offsetWidth; // Trigger reflow
