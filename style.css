@@ -761,9 +761,90 @@ footer span {
 }
 
 
+/* =========================================
+   PRINTING SCREEN ANIMATION
+   ========================================= */
+.printing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; /* Reduced top margin to fit the larger machine */
+}
 
+/* The physical printer box - Made larger */
+.printer-machine {
+  position: relative;
+  width: 900px; /* Wider */
+  height: 120px; /* Taller */
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  box-shadow: 8px 8px 0px var(--ink);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 
+.printer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px; /* Larger text */
+  font-weight: bold;
+  color: var(--ink);
+  letter-spacing: 0.1em;
+}
 
+.printer-slot {
+  position: absolute;
+  bottom: -2px;
+  width: 400px; /* Wider slot */
+  height: 8px; /* Thicker slot */
+  background: var(--ink);
+  border-radius: 4px;
+}
+
+/* The area where the paper falls - Made taller and wider */
+.printer-paper-wrapper {
+  position: relative;
+  width: 850px; /* Matches the wider slot */
+  height: 1000px; /* Taller area for the print to slide into */
+  overflow: hidden; 
+  z-index: 5;
+}
+
+/* The actual photo sliding down */
+.printing-paper {
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--ink); /* Thicker border */
+  box-shadow: 6px 6px 0px rgba(0, 51, 170, 0.2); /* Stronger shadow */
+  transform: translateY(-100%); 
+}
+
+/* The class we add with JS to trigger the print */
+/* Changed to 7s with an ease-in-out curve for mechanical pacing */
+.printing-paper.print-out {
+  animation: slideDownOut 7s cubic-bezier(0.42, 0, 0.58, 1) forwards; 
+}
+
+@keyframes slideDownOut {
+  0% { transform: translateY(-100%); }
+  /* Pauses slightly right after starting */
+  10% { transform: translateY(-80%); } 
+  /* Slows down in the middle */
+  50% { transform: translateY(-40%); } 
+  /* Speeds up slightly toward the end, then settles */
+  100% { transform: translateY(20px); } 
+}
+
+.blink-text {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
 
 /* iPAD & TABLET OPTIMIZATION */
 @media (max-width: 1024px) {
