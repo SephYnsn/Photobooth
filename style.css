@@ -256,7 +256,7 @@ h1 em, h2 em {
 
 h2 {
   font-size: clamp(42px, 6vw, 64px);
-  margin: 0 0 10px;
+  margin: 0 0 5px;
   text-transform: uppercase;
 }
 
