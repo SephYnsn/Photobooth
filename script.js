@@ -90,9 +90,9 @@ const templates = {
     width: 794,
     height: 1123,
     slots: [
-      { x: 45.3, y: 225.9, w: 498.8, h: 386.4 }
-      { x:43.6 , y: 767.2. , w: 252.7, h: 258 } 
-      { x: , y: , w: , h: } // Just one photo slot for this template
+      { x: 45.3, y: 225.9, w: 498.8, h: 386.4 },
+      { x:43.6 , y: 767.2 , w: 252.7, h: 258 } 
+      //{ x: , y: , w: , h: } // Just one photo slot for this template
     ]
   },
 
@@ -105,7 +105,7 @@ const templates = {
     height: 1123,
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
-       { x: 45, y: 225.9 , w:703.6 , h:386.4 } 
+      { x: 45, y: 225.9 , w:703.6 , h:386.4 },
       { x: 45.2, y:767.2 , w: 251.1 , h: 255.1} 
       
     ]
@@ -120,7 +120,7 @@ const templates = {
     height: 1123,
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
-      { x: 354.6 , y: 153.4 , w: 394 , h: 322.8}
+      { x: 354.6 , y: 153.4 , w: 394 , h: 322.8},
       { x: 25.1, y:520.6 , w: 256.3, h: 198.9 } 
       
     ]
