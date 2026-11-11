@@ -146,10 +146,10 @@ const templates = {
     width: 1200,
     height: 3600,
     slots: [
-      { x: 134.2, y: 405.4, w:  950.5, h: 566.8 },
-      { x: 137.3, y: 1160.3, w:  950.5, h: 572 },
-      { x: 140.1, y: 1922.6, w:  950.5, h: 572  },
-      { x: 141.1, y: 2685.3, w:  950.5, h: 572 }
+      { x: 99.3, y: 270.7 , w:  996.1, h: 595.6 },
+      { x: 101.9, y: 969.4, w:  996.1, h: 600.6 },
+      { x: 101.9, y: 1668.2, w:  996.1, h: 595.6  },
+      { x: 99.3, y: 2364.7, w:  996.1, h: 595.6 }
 
 
     ]
@@ -202,7 +202,7 @@ const templates = {
 
   package15: {
     name: "Package 15",
-    shotsRequired: 5,
+    shotsRequired: 4,
     bgUrl: "assets/Package1.5.png", // Name of your transparent Canva PNG in the folder
     width: 1200,
     height: 3600,
