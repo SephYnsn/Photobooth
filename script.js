@@ -121,8 +121,8 @@ const templates = {
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
       { x: 354.6 , y: 153.4 , w: 394 , h: 322.8},
-      { x: 25.1, y:520.6 , w: 256.3, h: 198.9 } 
-      
+      { x: 25.1, y:520.6 , w: 256.3, h: 198.9 }, 
+      { x: 264, y:774.7 , w: 256.3, h: 260.9 }
     ]
   },
 
@@ -137,8 +137,94 @@ const templates = {
     slots: [
       { x: 27.590551181102363, y: 224.27716535433075, w: 729.6, h: 499.5779527559056 } // Just one photo slot for this template
     ]
+  },
+
+  package11: {
+    name: "Package 11",
+    shotsRequired: 4,
+    bgUrl: "assets/Package1.1.png", // Name of your transparent Canva PNG in the folder
+    width: 192,
+    height: 576,
+    slots: [
+      { x: 15.9, y: 43.3, w:  159.4, h: 95.3 },
+      { x: 16.3, y: 155.1, w:  159.4, h: 99 },
+      { x: 16.3, y: 266.9, w:  159.4, h: 95.3 },
+      { x: 16.3, y: 379.1, w:  159.4, h: 95.3 }
+
+
+    ]
+  },
+
+
+  package12: {
+    name: "Package 12",
+    shotsRequired: 3,
+    bgUrl: "assets/Package1.1.png", // Name of your transparent Canva PNG in the folder
+    width: 192,
+    height: 576,
+    slots: [
+      { x: 28.9, y: 95, w: 135.5, h: 121.8 }, 
+      { x: 28.9, y: 225.6, w: 135.5, h: 121.8 },
+      { x: 28.9, y: 353.5, w: 135.5, h: 121.8 }
+    ]
+  },
+
+
+  package13: {
+    name: "Package 13",
+    shotsRequired: 3,
+    bgUrl: "assets/Package1.3.png", // Name of your transparent Canva PNG in the folder
+    width: 192,
+    height: 576,
+    slots: [
+      { x: 9.3, y: 98.9, w: 173.3, h: 100.4 },
+      { x: 9.3, y: 208.2, w: 173.3, h: 100.4 },
+      { x: 9.3, y: 362.5, w: 173.3, h: 100.4 }
+
+    ]
+  },
+
+
+  package14: {
+    name: "Package 14",
+    shotsRequired: 3,
+    bgUrl: "assets/Package1.4.png", // Name of your transparent Canva PNG in the folder
+    width: 192,
+    height: 576,
+    slots: [
+      { x: 0, y: 25.5, w: 192, h:  106.9 },
+      { x: 0, y: 157.9, w: 192, h: 106.9 },
+      { x: 0, y: 288, w: 192, h: 113.9 }
+
+    ]
+  },
+
+
+  package15: {
+    name: "Package 15",
+    shotsRequired: 5,
+    bgUrl: "assets/Package1.5.png", // Name of your transparent Canva PNG in the folder
+    width: 192,
+    height: 576,
+    slots: [
+      { x: 21.5, y: 64.9, w: 152.1, h:  90.7},
+      { x: 22, y: 185.7, w: 152.1, h:  90.7},
+      { x: 22.4, y: 308.5, w: 152.1, h:  90.7},
+      { x: 22.4, y: 429.3, w: 153, h:  91.9}
+    
+      
+
+    ]
   }
-};
+
+
+
+}
+
+
+
+
+
 
 // Universal rendering engine for Canva PNGs (Anti-Squish Version)
 // Helper: Anti-Squish Cropping Logic (Handles both Static Images and Live Video)

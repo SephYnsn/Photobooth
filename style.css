@@ -197,7 +197,7 @@ h1 em, h2 em {
 
 /* Template Slideshow on Welcome Screen */
 .slideshow-image {
-  max-height: 65%;
+  max-height: 360px;
   max-width: 65%;
   object-fit: contain;
   border: 2px solid var(--ink);
