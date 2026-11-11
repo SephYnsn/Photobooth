@@ -42,6 +42,7 @@ let stream = null,
     uploadToken = null, 
     busy = false;
     activeCode = "",       // Stores the validated ticket code
+    
     currentInput = "";
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -81,30 +82,52 @@ const showScreen = async (s) => {
 // TEMPLATE REGISTRY (Configure your Canva PNGs here)
 // =========================================================
 const templates = {
-  front_page2: {
+
+  front_page1: {
     name: "Front Page1",
     shotsRequired: 2,
-    bgUrl: "assets/newspaper_template2.png", // Name of your transparent Canva PNG in the folder
+    bgUrl: "assets/Newspaper1.png",
+    width: 794,
+    height: 1123,
+    slots: [
+      { x: 45.3, y: 225.9, w: 498.8, h: 386.4 }
+      { x:43.6 , y: 767.2. , w: 252.7, h: 258 } 
+      { x: , y: , w: , h: } // Just one photo slot for this template
+    ]
+  },
+
+
+  front_page2: {
+    name: "Front Page2",
+    shotsRequired: 2,
+    bgUrl: "assets/Newspaper2.png", // Name of your transparent Canva PNG in the folder
     width:  794 ,
     height: 1123,
     // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
-      { x: 45.42992125984252, y: 225.37322834645673, w: 498.14173228346465, h: 389.25354330708666 },
-      { x: 45.42992125984252, y: 766.8661417322836, w: 249.25984251968507, h: 255.00472440944884 },
+       { x: 45, y: 225.9 , w:703.6 , h:386.4 } 
+      { x: 45.2, y:767.2 , w: 251.1 , h: 255.1} 
       
     ]
-  }, 
-  front_page1: {
-    name: "Front Page2",
-    shotsRequired: 1,
-    bgUrl: "assets/newspaper_template1.png", // Name of your transparent Canva PNG in the folder
-    width: 1080,
-    height: 1527,
+  },
+  
+  
+  front_page3: {
+    name: "Front Page3",
+    shotsRequired: 3,
+    bgUrl: "assets/Newspaper3.png", // Name of your transparent Canva PNG in the folder
+    width:  794 ,
+    height: 1123,
+    // (x, y, width, height) defining exactly where each photo belongs on the PNG
     slots: [
-      { x: 80, y: 350, w: 920, h: 690 } // Just one photo slot for this template
+      { x: 354.6 , y: 153.4 , w: 394 , h: 322.8}
+      { x: 25.1, y:520.6 , w: 256.3, h: 198.9 } 
+      
     ]
   },
 
+
+ 
   wanted_poster: {
     name: "Wanter Poster",
     shotsRequired: 1,
@@ -344,8 +367,25 @@ $("btnEnter").addEventListener("click", async () => {
   try {
     const result = await verifyTicketOnServer(currentInput);
     if (result.valid) {
-      activeCode = currentInput; // Save the validated code!
-      showScreen(templateScreen);
+      activeCode = currentInput; 
+      
+      // NEW: Filter the layout options based on the package
+      const userPackage = String(result.package); // Will be "1", "2", or "master"
+      
+      // Find all elements in the HTML that have a data-package attribute
+      document.querySelectorAll("[data-package]").forEach(layoutBtn => {
+        const btnPackage = layoutBtn.getAttribute("data-package");
+        
+        // If they used the master PIN, or if the layout matches their ticket's package, show it
+        if (userPackage === "master" || userPackage === btnPackage) {
+          layoutBtn.style.display = ""; // Shows the layout
+        } else {
+          layoutBtn.style.display = "none"; // Hides the layout
+        }
+      });
+
+      await showScreen(templateScreen);
+      
     } else {
       $("ticketDisplay").textContent = currentInput;
       $("ticketError").textContent = result.message || "Invalid Code";
