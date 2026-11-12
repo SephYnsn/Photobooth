@@ -250,24 +250,47 @@ function drawCropped(ctx, source, sx, sy, sw, sh) {
 }
 
 // Generates the final static print for download/upload
-async function renderTemplate(template, capturedShots) {
-  const c = document.createElement("canvas");
-  c.width = template.width;
-  c.height = template.height;
-  const ctx = c.getContext("2d");
+// Inside your template rendering function (e.g., renderTemplate):
+async function renderTemplate(templateId, shots) {
+  // 1. Generate your standard single strip/layout canvas first
+  const singleCanvas = document.createElement("canvas");
+  const ctx = singleCanvas.getContext("2d");
+  
+  // ... (your existing code that draws the photos and backgrounds onto singleCanvas) ...
 
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, c.width, c.height);
+  // 2. CHECK IF PACKAGE 2 IS ACTIVE
+  if (activePackage === "2") {
+    const doubleCanvas = document.createElement("canvas");
+    const dCtx = doubleCanvas.getContext("2d");
+    
+    const gap = 40; // Pixel gap between the two strips for easy cutting
+    doubleCanvas.width = (singleCanvas.width * 2) + gap;
+    doubleCanvas.height = singleCanvas.height;
+    
+    // Fill background (match your theme paper color)
+    dCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || "#f4f1ea";
+    dCtx.fillRect(0, 0, doubleCanvas.width, doubleCanvas.height);
+    
+    // Draw Strip 1 on the left
+    dCtx.drawImage(singleCanvas, 0, 0);
+    
+    // Draw Strip 2 on the right
+    dCtx.drawImage(singleCanvas, singleCanvas.width + gap, 0);
+    
+    // Optional: Draw a subtle dashed cutting line right down the middle gap
+    dCtx.strokeStyle = "#999";
+    dCtx.lineWidth = 2;
+    dCtx.setLineDash([8, 8]);
+    dCtx.beginPath();
+    dCtx.moveTo(singleCanvas.width + (gap / 2), 20);
+    dCtx.lineTo(singleCanvas.width + (gap / 2), doubleCanvas.height - 20);
+    dCtx.stroke();
+    
+    return doubleCanvas; // Returns the side-by-side double strip for Package 2
+  }
 
-  template.slots.forEach((slot, index) => {
-    if (capturedShots[index]) {
-      drawCropped(ctx, capturedShots[index], slot.x, slot.y, slot.w, slot.h);
-    }
-  });
-
-  if (!template.imgObj) template.imgObj = await loadImage(template.bgUrl);
-  ctx.drawImage(template.imgObj, 0, 0, template.width, template.height);
-  return c;
+  // Otherwise, return the normal single strip for Package 1 / Master
+  return singleCanvas;
 }
 
 // NEW: Real-Time Canvas Loop for the Sidebar
