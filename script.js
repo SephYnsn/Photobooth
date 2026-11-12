@@ -42,7 +42,7 @@ let stream = null,
     uploadToken = null, 
     busy = false;
     activeCode = "",       // Stores the validated ticket code
-    
+    activePackage = "",
     currentInput = "";
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -250,25 +250,35 @@ function drawCropped(ctx, source, sx, sy, sw, sh) {
 }
 
 // Generates the final static print for download/upload
-// Inside your template rendering function (e.g., renderTemplate):
-async function renderTemplate(templateId, shots) {
-  // 1. Generate your standard single strip/layout canvas first
+// Generates the final static print for download/upload (Supports Package 2 Double Strip)
+async function renderTemplate(template, capturedShots) {
   const singleCanvas = document.createElement("canvas");
-  const ctx = singleCanvas.getContext("2d");
-  
-  // ... (your existing code that draws the photos and backgrounds onto singleCanvas) ...
+  singleCanvas.width = template.width;
+  singleCanvas.height = template.height;
+  const sCtx = singleCanvas.getContext("2d");
 
-  // 2. CHECK IF PACKAGE 2 IS ACTIVE
+  sCtx.fillStyle = "#ffffff";
+  sCtx.fillRect(0, 0, singleCanvas.width, singleCanvas.height);
+
+  template.slots.forEach((slot, index) => {
+    if (capturedShots[index]) {
+      drawCropped(sCtx, capturedShots[index], slot.x, slot.y, slot.w, slot.h);
+    }
+  });
+
+  if (!template.imgObj) template.imgObj = await loadImage(template.bgUrl);
+  sCtx.drawImage(template.imgObj, 0, 0, template.width, template.height);
+
+  // If Package 2 is active, duplicate side-by-side with a cutting guide
   if (activePackage === "2") {
     const doubleCanvas = document.createElement("canvas");
     const dCtx = doubleCanvas.getContext("2d");
     
-    const gap = 40; // Pixel gap between the two strips for easy cutting
+    const gap = 40; // Gap between strips for easy paper cutting
     doubleCanvas.width = (singleCanvas.width * 2) + gap;
     doubleCanvas.height = singleCanvas.height;
     
-    // Fill background (match your theme paper color)
-    dCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || "#f4f1ea";
+    dCtx.fillStyle = "#ffffff";
     dCtx.fillRect(0, 0, doubleCanvas.width, doubleCanvas.height);
     
     // Draw Strip 1 on the left
@@ -277,21 +287,21 @@ async function renderTemplate(templateId, shots) {
     // Draw Strip 2 on the right
     dCtx.drawImage(singleCanvas, singleCanvas.width + gap, 0);
     
-    // Optional: Draw a subtle dashed cutting line right down the middle gap
-    dCtx.strokeStyle = "#999";
-    dCtx.lineWidth = 2;
-    dCtx.setLineDash([8, 8]);
+    // Dashed center cutting guideline
+    dCtx.strokeStyle = "#111111";
+    dCtx.lineWidth = 3;
+    dCtx.setLineDash([10, 10]);
     dCtx.beginPath();
-    dCtx.moveTo(singleCanvas.width + (gap / 2), 20);
-    dCtx.lineTo(singleCanvas.width + (gap / 2), doubleCanvas.height - 20);
+    dCtx.moveTo(singleCanvas.width + (gap / 2), 30);
+    dCtx.lineTo(singleCanvas.width + (gap / 2), doubleCanvas.height - 30);
     dCtx.stroke();
     
-    return doubleCanvas; // Returns the side-by-side double strip for Package 2
+    return doubleCanvas;
   }
 
-  // Otherwise, return the normal single strip for Package 1 / Master
   return singleCanvas;
 }
+
 
 // NEW: Real-Time Canvas Loop for the Sidebar
 let previewLoopId = null;
@@ -477,6 +487,7 @@ $("btnEnter").addEventListener("click", async () => {
     const result = await verifyTicketOnServer(currentInput);
     if (result.valid) {
       activeCode = currentInput; 
+      activePackage = String(result.package)
       
       // NEW: Filter the layout options based on the package
       const userPackage = String(result.package); // Will be "1", "2", or "master"
