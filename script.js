@@ -159,13 +159,13 @@ const templates = {
   package12: {
     name: "Package 12",
     shotsRequired: 3,
-    bgUrl: "assets/Package1.1.png", // Name of your transparent Canva PNG in the folder
-    width: 192,
-    height: 576,
+    bgUrl: "assets/Package1.2.png", // Name of your transparent Canva PNG in the folder
+    width: 1200,
+    height: 3600,
     slots: [
-      { x: 28.9, y: 95, w: 135.5, h: 121.8 }, 
-      { x: 28.9, y: 225.6, w: 135.5, h: 121.8 },
-      { x: 28.9, y: 353.5, w: 135.5, h: 121.8 }
+      { x:180.8, y: 594, w: 846.6, h: 761 }, 
+      { x: 180.8, y: 1409.9, w: 846.6, h: 744.1 },
+      { x: 176.7, y: 2209.4, w: 846.6, h: 761 }
     ]
   },
 
@@ -174,12 +174,12 @@ const templates = {
     name: "Package 13",
     shotsRequired: 3,
     bgUrl: "assets/Package1.3.png", // Name of your transparent Canva PNG in the folder
-    width: 192,
-    height: 576,
+    width: 1200,
+    height: 3600,
     slots: [
-      { x: 9.3, y: 98.9, w: 173.3, h: 100.4 },
-      { x: 9.3, y: 208.2, w: 173.3, h: 100.4 },
-      { x: 9.3, y: 362.5, w: 173.3, h: 100.4 }
+      { x: 58.3, y: 618.2, w: 1083.4, h: 627.6 },
+      { x: 58.3, y: 1301.4, w: 1083.4, h: 627.6 },
+      { x: 58.3, y: 2265.7, w: 1083.4, h: 627.6 }
 
     ]
   },
@@ -189,12 +189,12 @@ const templates = {
     name: "Package 14",
     shotsRequired: 3,
     bgUrl: "assets/Package1.4.png", // Name of your transparent Canva PNG in the folder
-    width: 192,
-    height: 576,
+    width: 1200,
+    height: 3600,
     slots: [
-      { x: 0, y: 25.5, w: 192, h:  106.9 },
-      { x: 0, y: 157.9, w: 192, h: 106.9 },
-      { x: 0, y: 288, w: 192, h: 113.9 }
+      { x: 0, y: 159.3, w: 1200, h:  668.1 },
+      { x: 0, y: 986.8, w: 1200 , h: 668.1 },
+      { x: 0, y: 1800, w: 1200, h: 712 }
 
     ]
   },
